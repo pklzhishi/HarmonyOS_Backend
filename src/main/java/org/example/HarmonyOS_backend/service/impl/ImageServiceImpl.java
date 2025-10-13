@@ -75,10 +75,6 @@ public class ImageServiceImpl implements ImageService {
                     + originalFilename.substring(originalFilename.lastIndexOf("."));
 
             tempSavedFile = new File(saveDir, fileName); // 拼接完整路径
-//            try (FileOutputStream fos = new FileOutputStream(tempSavedFile)) {
-//                fos.write(imageBinaryData); // 写入解码后的二进制数据
-//                fos.flush();
-//            }
 
             try (FileOutputStream fos = new FileOutputStream(tempSavedFile)){
                 fos.write(imageBinaryData); // 写入解码后的二进制数据

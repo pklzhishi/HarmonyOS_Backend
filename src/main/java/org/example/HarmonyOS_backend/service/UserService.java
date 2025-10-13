@@ -10,5 +10,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UserService {
     int register(RegisterDto registerDto);
     Result<UserLoginVo> login(LoginDto loginDto);
-    Result<T> changeUserHeadshot(MultipartFile headshotUrl);
+    Result<T> changeUserHeadshot(MultipartFile headshotImage);
 }

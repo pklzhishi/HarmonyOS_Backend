@@ -18,11 +18,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -115,48 +117,69 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<T> changeUserHeadshot(MultipartFile headshotUrl)
+    public Result<T> changeUserHeadshot(MultipartFile headshotImage)
     {
-        // 1. 校验文件是否为空
-        if (headshotUrl.isEmpty()) {
-            return Result.error("上传失败：请选择文件");
-        }
-
-        // 2. 校验文件类型（仅允许图片格式）
-        String originalFilename = headshotUrl.getOriginalFilename();
-        if (originalFilename == null || !originalFilename.matches(".*\\.(jpg|jpeg|png|gif)$")) {
-            return Result.error("上传失败：仅支持 jpg、jpeg、png、gif 等图片格式");
-        }
-
-        // 3. 生成唯一文件名（避免重名覆盖）
-        String fileName = UUID.randomUUID().toString()
-                + originalFilename.substring(originalFilename.lastIndexOf("."));
-
-        // 4. 创建保存目录（若不存在则创建）
-        File saveDir = new File(header);
-        if (!saveDir.exists()) {
-            saveDir.mkdirs(); // 递归创建目录
-        }
-
-        // 5. 保存文件到本地
+        File tempSavedFile = null;
         try {
-            File destFile = new File(header + fileName);
-            headshotUrl.transferTo(destFile); // 将上传的文件保存到目标路径
-            // 返回图片访问路径（实际项目中可配置为服务器 URL）
-            try {
-                int userId = UserHolder.getUserId();
-                int change = userMapper.changeUserHeadshot(fileName,userId);
-                if (change <= 0) {
-                    log.error("头像上传失败，数据库插入异常");
-                    throw new RuntimeException("头像上传失败，请稍后重试");
-                }
-                return Result.success();
-            } catch (Exception e) {
-                log.error("头像上传数据库操作异常", e);
-                throw new RuntimeException("系统异常，图片上传失败", e);
+            if (headshotImage.isEmpty()) {
+                return Result.error("上传失败：请选择文件");
             }
-        } catch (IOException e) {
-            return Result.error("上传失败：" + e.getMessage());
+
+            String originalFilename = headshotImage.getOriginalFilename();
+            System.out.println("----------------------------------");
+            System.out.println(originalFilename);
+            System.out.println("----------------------------------");
+            if (originalFilename == null || !originalFilename.matches(".*\\.(jpg|jpeg|png|gif)$")) {
+                return Result.error("上传失败：仅支持 jpg、jpeg、png、gif 等图片格式");
+            }
+
+            // 3. 关键步骤：读取前端传递的Base64文本，解码为二进制图片数据
+            // 3.1 先将MultipartFile的内容转为字符串（因为前端传的是Base64文本）
+            String base64Text = new String(headshotImage.getBytes(), StandardCharsets.UTF_8);
+            // 3.2 去除Base64前缀（若前端传的是带前缀格式，如"data:image/png;base64,iVBORw0KGgo..."）
+//            String pureBase64 = base64Text.replaceAll("^data:image/[^;]+;base64,", "");
+            // 3.3 Base64解码为二进制（核心：将文本转为图片二进制）
+            byte[] imageBinaryData;
+            try {
+                imageBinaryData = Base64.getDecoder().decode(base64Text);
+            } catch (IllegalArgumentException e) {
+                log.error("Base64解码失败：文本不是有效Base64格式", e);
+                return Result.error("文件编码错误，请重新上传");
+            }
+
+            File saveDir = new File(header);
+            if (!saveDir.exists()) {
+                saveDir.mkdirs();
+            }
+
+            String fileName = UUID.randomUUID().toString()
+                    + originalFilename.substring(originalFilename.lastIndexOf("."));
+
+            tempSavedFile = new File(saveDir, fileName); // 拼接完整路径
+
+            try (FileOutputStream fos = new FileOutputStream(tempSavedFile)){
+                fos.write(imageBinaryData); // 写入解码后的二进制数据
+                fos.flush();
+                try {
+                    int insertRows = userMapper.changeUserHeadshot(fileName,UserHolder.getUserId());
+                    if (insertRows <= 0) {
+                        log.error("头像上传失败，数据库插入异常");
+                        throw new RuntimeException("头像上传失败，请稍后重试");
+                    }
+                    return Result.success();
+                } catch (Exception e) {
+                    log.error("头像上传数据库操作异常", e);
+                    throw new RuntimeException("系统异常，头像上传失败", e);
+                }
+            } catch (IOException e) {
+                return Result.error("上传失败：" + e.getMessage());
+            }
+        }catch (IOException e) {
+            log.error("文件保存异常", e);
+            return Result.error("文件保存失败，请检查服务器磁盘");
+        } catch (Exception e) {
+            log.error("上传系统异常", e);
+            return Result.error("系统异常，请重试");
         }
     }
 }

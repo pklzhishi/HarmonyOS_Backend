@@ -45,8 +45,8 @@ public class UserController {
     }
 
     @PostMapping("/changeUserHeadshot")
-    public Result<T> changeUserHeadshot(MultipartFile headshotUrl)
+    public Result<T> changeUserHeadshot(MultipartFile headshotImage)
     {
-        return userService.changeUserHeadshot(headshotUrl);
+        return userService.changeUserHeadshot(headshotImage);
     }
 }
