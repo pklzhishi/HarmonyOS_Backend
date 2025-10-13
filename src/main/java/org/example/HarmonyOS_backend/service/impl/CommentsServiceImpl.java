@@ -4,6 +4,7 @@ import org.apache.poi.ss.formula.functions.T;
 import org.example.HarmonyOS_backend.Result.Result;
 import org.example.HarmonyOS_backend.mapper.CommentsMapper;
 import org.example.HarmonyOS_backend.model.dto.PostCommentsDto;
+import org.example.HarmonyOS_backend.model.entity.Comments;
 import org.example.HarmonyOS_backend.service.CommentsService;
 import org.example.HarmonyOS_backend.tool.UserHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,12 @@ public class CommentsServiceImpl implements CommentsService {
     public Result<T> deleteComments(int id)
     {
         try{
-            int userIdDeleted = commentsMapper.getUserIdDeleted(id).getUserId();
+            Comments commentsDeleted = commentsMapper.getUserIdDeleted(id);
+            if(commentsDeleted == null)
+            {
+                return Result.error("评论不存在");
+            }
+            int userIdDeleted = commentsDeleted.getUserId();
             int user = UserHolder.getUserId();
             if(userIdDeleted == user)
             {

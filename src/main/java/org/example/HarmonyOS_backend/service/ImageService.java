@@ -20,4 +20,6 @@ public interface ImageService {
     Result<List<GetImageRandomlyVo>> getImageRandomly(int count);
 
     Result<List<GetImageRandomlyVo>> searchImage(String imageName);
+
+    Result<T> deleteImage(int imageId);
 }

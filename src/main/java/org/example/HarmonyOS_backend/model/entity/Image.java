@@ -8,10 +8,10 @@ import lombok.Data;
 public class Image {
     private int imageId;
     private String imageName;
-    private String imageOwner;
+    private int imageOwner;
     private String imageUrl;
     private String imageLike;
     private String imageTime;
-    private String isDelete;
+    private int isDelete;
     private String content;
 }
