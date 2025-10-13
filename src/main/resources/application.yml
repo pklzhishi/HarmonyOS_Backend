@@ -20,6 +20,22 @@ spring:
       max-file-size: 10MB      # 单个文件最大大小
       max-request-size: 100MB  # 单次请求所有文件总大小
 
+  mail:
+    host: smtp.qq.com
+    port: 465
+    username: 3465154309@qq.com
+    password: bzcrbemqjuqacjab
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+          auth: true
+        timeout: 5000
+        connectiontimeout: 5000
+        writetimeout: 5000
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -51,3 +67,9 @@ aliyun:
   oss:
     endpoint: https://oss-cn-guangzhou.aliyuncs.com
     bucketName: web-carbon
+
+# 自定义验证码配置
+verification:
+  code-length: 6
+  expire-seconds: 300
+  email-subject: "【验证码】你的验证码"

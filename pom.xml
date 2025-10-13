@@ -148,6 +148,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
         <!-- 解决MockMultipartFile无法引用的问题 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
