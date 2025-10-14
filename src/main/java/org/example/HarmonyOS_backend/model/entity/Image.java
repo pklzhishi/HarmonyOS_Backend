@@ -10,7 +10,8 @@ public class Image {
     private String imageName;
     private int imageOwner;
     private String imageUrl;
-    private String imageLike;
+    private int imageLike;
+    private int imageBookmark;
     private String imageTime;
     private int isDelete;
     private String content;

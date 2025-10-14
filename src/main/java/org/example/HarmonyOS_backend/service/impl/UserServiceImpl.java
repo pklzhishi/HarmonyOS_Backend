@@ -38,10 +38,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtProperties jwtProperties;
 
-    private static final String header = "D:/upload/images/";
-    //    private static final String header = "/opt/HarmonyOS/upload/images/";
-    private static final String header1 = "http://10.34.62.85:8000/images/";
-//    private static final String header1 = "http://115.29.241.234:8000/images/";
+//    private static final String header = "D:/upload/images/";
+        private static final String header = "/opt/HarmonyOS/upload/images/";
+//    private static final String header1 = "http://192.168.99.40:8000/images/";
+    private static final String header1 = "http://115.29.241.234:8000/images/";
 
     private static String md5(String input) {
         try {

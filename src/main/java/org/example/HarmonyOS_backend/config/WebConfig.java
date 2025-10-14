@@ -19,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginCheckInterceptor).addPathPatterns("/api/image/imageUpload","/api/userLike/changeUserLike",
                 "/api/comments/postComments","/api/comments/deleteComments","/api/image/getMyImage",
                 "/api/image/getMyImageNumber","/api/image/getImageRandomly","/api/user/changeUserHeadshot",
-                "/api/image/deleteImage").excludePathPatterns("/api/user/login","/api/user/register");
+                "/api/image/deleteImage","/api/bookmark/changeBookmark").excludePathPatterns("/api/user/login","/api/user/register","/api/email/sendVerificationCode");
     }
 
     @Override

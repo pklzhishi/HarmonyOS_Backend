@@ -32,9 +32,9 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private ImageMapper imageMapper;
     private ImageUploadDto imageUploadDto = new ImageUploadDto();
-//    private static final String header = "D:/upload/images/";
+//        private static final String header = "D:/upload/images/";
     private static final String header = "/opt/HarmonyOS/upload/images/";
-//    private static final String header1 = "http://10.34.108.94:8000/images/";
+//        private static final String header1 = "http://10.34.18.43:8000/images/";
     private static final String header1 = "http://115.29.241.234:8000/images/";
     public Result<T> imageUplode(MultipartFile multipartFile, String imageName,String content)
     {
@@ -52,15 +52,16 @@ public class ImageServiceImpl implements ImageService {
                 return Result.error("上传失败：仅支持 jpg、jpeg、png、gif 等图片格式");
             }
 
-            // 3. 关键步骤：读取前端传递的Base64文本，解码为二进制图片数据
+//             "3. 关键步骤：读取前端传递的Base64文本，解码为二进制图片数据"
             // 3.1 先将MultipartFile的内容转为字符串（因为前端传的是Base64文本）
             String base64Text = new String(multipartFile.getBytes(), StandardCharsets.UTF_8);
             // 3.2 去除Base64前缀（若前端传的是带前缀格式，如"data:image/png;base64,iVBORw0KGgo..."）
 //            String pureBase64 = base64Text.replaceAll("^data:image/[^;]+;base64,", "");
-            // 3.3 Base64解码为二进制（核心：将文本转为图片二进制）
+//            " 3.3 Base64解码为二进制（核心：将文本转为图片二进制）"
             byte[] imageBinaryData;
             try {
                 imageBinaryData = Base64.getDecoder().decode(base64Text);
+                log.info("Base64解码成功，二进制大小：{}字节", imageBinaryData.length);
             } catch (IllegalArgumentException e) {
                 log.error("Base64解码失败：文本不是有效Base64格式", e);
                 return Result.error("文件编码错误，请重新上传");
