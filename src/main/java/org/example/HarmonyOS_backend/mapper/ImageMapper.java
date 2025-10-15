@@ -30,7 +30,7 @@ public interface ImageMapper {
     "ORDER BY RAND() LIMIT #{count}")
     List<GetImageRandomlyVo> getImageRandomly(int count);
 
-    @Select("SELECT image_id,image_name,image_owner,image_url,image_like,image_time,content,username,headshot_url " +
+    @Select("SELECT image_id,user_id,image_name,image_owner,image_url,image_like,image_time,content,username,headshot_url " +
             "FROM user JOIN image ON user.user_id = image.image_owner WHERE user.is_delete = 0 AND image.is_delete = 0 " +
             "AND image_name LIKE CONCAT('%',#{imageName},'%') ORDER BY image_like DESC")
     List<GetImageRandomlyVo> searchImage(String imageName);
@@ -41,7 +41,7 @@ public interface ImageMapper {
     @Select("SELECT * FROM image WHERE image_id = #{imageId} AND is_delete = 0")
     Image getUserIdDeleted(int imageId);
 
-    @Select("SELECT image_id,image_name,image_owner,image_url,image_like,image_bookmark,image_time,content,username,headshot_url " +
+    @Select("SELECT image_id,user_id,image_name,image_owner,image_url,image_like,image_bookmark,image_time,content,username,headshot_url " +
             "FROM user JOIN image ON user.user_id = image.image_owner WHERE image_id = #{imageId} " +
             "AND user.is_delete = 0 AND image.is_delete = 0")
     GetImageInformationVo getImageInformation(int imageId);

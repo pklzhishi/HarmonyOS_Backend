@@ -4,9 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.functions.T;
 import org.example.HarmonyOS_backend.Result.Result;
 import org.example.HarmonyOS_backend.mapper.BookmarkMapper;
+import org.example.HarmonyOS_backend.mapper.UserLikeMapper;
 import org.example.HarmonyOS_backend.model.dto.FindBookmarkDto;
+import org.example.HarmonyOS_backend.model.dto.FindUserLikeDto;
+import org.example.HarmonyOS_backend.model.entity.Bookmark;
 import org.example.HarmonyOS_backend.model.entity.UserLike;
 import org.example.HarmonyOS_backend.model.vo.GetBookmarkVo;
+import org.example.HarmonyOS_backend.model.vo.GetCommentsListVo;
 import org.example.HarmonyOS_backend.service.BookmarkService;
 import org.example.HarmonyOS_backend.tool.UserHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +23,16 @@ import java.util.List;
 public class BookmarkServiceImpl implements BookmarkService {
     @Autowired
     private BookmarkMapper bookmarkMapper;
+    @Autowired
+    private UserLikeMapper userLikeMapper;
 
+    private static final String header1 = "http://115.29.241.234:8000/images/";
     @Override
     public Result<String> changeBookmark(FindBookmarkDto findBookmarkDto)
     {
         findBookmarkDto.setUserId(UserHolder.getUserId());
-        UserLike userLike = bookmarkMapper.findBookmarkRecord(findBookmarkDto);
-        if(userLike == null)
+        Bookmark bookmark = bookmarkMapper.findBookmarkRecord(findBookmarkDto);
+        if(bookmark == null)
         {
             try{
                 int x = bookmarkMapper.insertBookmarkRecord(findBookmarkDto);
@@ -68,6 +75,35 @@ public class BookmarkServiceImpl implements BookmarkService {
         int userId = UserHolder.getUserId();
         try{
             List<GetBookmarkVo> dataList = bookmarkMapper.getBookmarkList(userId);
+            for(GetBookmarkVo classInfo:dataList)
+            {
+                FindUserLikeDto findUserLikeDto = new FindUserLikeDto();
+                findUserLikeDto.setImageId(classInfo.getImageId());
+                findUserLikeDto.setUserId(UserHolder.getUserId());
+                UserLike userLike = userLikeMapper.findUserLikeRecord(findUserLikeDto);
+                if(userLike == null)
+                {
+                    classInfo.setIsLike(0);
+                }
+                else
+                {
+                    classInfo.setIsLike(1);
+                }
+                FindBookmarkDto findBookmarkDto = new FindBookmarkDto();
+                findBookmarkDto.setImageId(classInfo.getImageId());
+                findBookmarkDto.setUserId(UserHolder.getUserId());
+                Bookmark bookmark = bookmarkMapper.findBookmarkRecord(findBookmarkDto);
+                if(bookmark == null)
+                {
+                    classInfo.setIsBookmark(0);
+                }
+                else
+                {
+                    classInfo.setIsBookmark(1);
+                }
+                classInfo.setImageUrl(header1 + classInfo.getImageUrl());
+                classInfo.setHeadshotUrl(header1 + classInfo.getHeadshotUrl());
+            }
             return Result.success(dataList);
         }catch(RuntimeException e) {
             throw new RuntimeException("获取失败，请稍后再试");

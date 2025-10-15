@@ -14,4 +14,5 @@ public class GetBrowsingHistoryListVo {
     private String imageTime;
     private String username;
     private String headshotUrl;
+    private int isLike;
 }

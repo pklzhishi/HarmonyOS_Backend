@@ -5,18 +5,22 @@ import org.example.HarmonyOS_backend.Result.Result;
 import org.example.HarmonyOS_backend.mapper.CommentsMapper;
 import org.example.HarmonyOS_backend.model.dto.PostCommentsDto;
 import org.example.HarmonyOS_backend.model.entity.Comments;
+import org.example.HarmonyOS_backend.model.vo.GetBookmarkVo;
+import org.example.HarmonyOS_backend.model.vo.GetCommentsListVo;
 import org.example.HarmonyOS_backend.service.CommentsService;
 import org.example.HarmonyOS_backend.tool.UserHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class CommentsServiceImpl implements CommentsService {
     @Autowired
     private CommentsMapper commentsMapper;
 
+    private static final String header1 = "http://115.29.241.234:8000/images/";
     @Override
     public Result<T> postComments(PostCommentsDto postCommentsDto)
     {
@@ -48,7 +52,7 @@ public class CommentsServiceImpl implements CommentsService {
             }
             int userIdDeleted = commentsDeleted.getUserId();
             int user = UserHolder.getUserId();
-            if(userIdDeleted == user)
+            if(userIdDeleted == user || user == commentsDeleted.getUserId())
             {
                 try{
                     int x = commentsMapper.deleteComments(id);
@@ -70,6 +74,21 @@ public class CommentsServiceImpl implements CommentsService {
             }
         }catch(Exception e){
             throw new RuntimeException("系统异常，删除失败",e);
+        }
+    }
+
+    @Override
+    public Result<List<GetCommentsListVo>> getCommentsList(int imageId)
+    {
+        try{
+            List<GetCommentsListVo> dataList = commentsMapper.getCommentsList(imageId);
+            for(GetCommentsListVo classInfo:dataList)
+            {
+                classInfo.setHeadshotUrl(header1 + classInfo.getHeadshotUrl());
+            }
+            return Result.success(dataList);
+        }catch(RuntimeException e){
+            throw new RuntimeException("获取评论失败,请稍后再试");
         }
     }
 }

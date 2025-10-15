@@ -14,4 +14,6 @@ public class GetBookmarkVo {
     private String imageTime;
     private String username;
     private String headshotUrl;
+    private int isLike;
+    private int isBookmark;
 }

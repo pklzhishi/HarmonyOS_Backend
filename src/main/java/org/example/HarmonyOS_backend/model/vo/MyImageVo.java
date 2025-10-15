@@ -10,4 +10,6 @@ public class MyImageVo {
     private String imageLike;
     private String imageTime;
     private String content;
+    private int isLike;
+    private int isBookmark;
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class GetImageInformationVo {
     private int imageId;
+    private int userId;
     private String imageName;
     private int imageOwner;
     private String imageUrl;
@@ -14,4 +15,6 @@ public class GetImageInformationVo {
     private String imageTime;
     private String username;
     private String headshotUrl;
+    private int isLike;
+    private int isBookmark;
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface BookmarkMapper {
     @Select("SELECT * FROM bookmark WHERE image_id = #{imageId} AND user_id = #{userId}")
-    UserLike findBookmarkRecord(FindBookmarkDto findBookmarkDto);
+    Bookmark findBookmarkRecord(FindBookmarkDto findBookmarkDto);
 
     @Insert("INSERT INTO bookmark(image_id,user_id) VALUES (#{imageId},#{userId})")
     int insertBookmarkRecord(FindBookmarkDto findBookmarkDto);

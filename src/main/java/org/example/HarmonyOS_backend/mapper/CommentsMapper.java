@@ -6,6 +6,10 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.example.HarmonyOS_backend.model.dto.PostCommentsDto;
 import org.example.HarmonyOS_backend.model.entity.Comments;
+import org.example.HarmonyOS_backend.model.vo.GetBrowsingHistoryListVo;
+import org.example.HarmonyOS_backend.model.vo.GetCommentsListVo;
+
+import java.util.List;
 
 @Mapper
 public interface CommentsMapper {
@@ -17,4 +21,8 @@ public interface CommentsMapper {
 
     @Select("SELECT * FROM comments WHERE id = #{id}")
     Comments getUserIdDeleted(int id);
+
+    @Select("SELECT id,comments.user_id,content,comments_time,username,headshot_url FROM comments JOIN user ON comments.user_id = user.user_id " +
+            "WHERE image_id = #{imageId} AND comments.is_delete = 0 ORDER BY comments_time ASC")
+    List<GetCommentsListVo> getCommentsList(int imageId);
 }

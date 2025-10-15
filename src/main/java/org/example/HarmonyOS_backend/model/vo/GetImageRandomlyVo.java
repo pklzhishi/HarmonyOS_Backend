@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class GetImageRandomlyVo {
     private int imageId;
+    private int userId;
     private String imageName;
     private int imageOwner;
     private String imageUrl;
@@ -13,4 +14,6 @@ public class GetImageRandomlyVo {
     private String content;
     private String username;
     private String headshotUrl;
+    private int isLike;
+    private int isBookmark;
 }

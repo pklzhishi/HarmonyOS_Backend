@@ -4,14 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.Null;
 import org.apache.poi.ss.formula.functions.T;
 import org.example.HarmonyOS_backend.Result.Result;
+import org.example.HarmonyOS_backend.mapper.BookmarkMapper;
 import org.example.HarmonyOS_backend.mapper.BrowsingHistoryMapper;
 import org.example.HarmonyOS_backend.mapper.ImageMapper;
-import org.example.HarmonyOS_backend.model.dto.GetMyImageDto;
-import org.example.HarmonyOS_backend.model.dto.ImageUploadDto;
-import org.example.HarmonyOS_backend.model.dto.InsertBrowsingHistoryDto;
-import org.example.HarmonyOS_backend.model.entity.BrowsingHistory;
-import org.example.HarmonyOS_backend.model.entity.Image;
-import org.example.HarmonyOS_backend.model.entity.User;
+import org.example.HarmonyOS_backend.mapper.UserLikeMapper;
+import org.example.HarmonyOS_backend.model.dto.*;
+import org.example.HarmonyOS_backend.model.entity.*;
 import org.example.HarmonyOS_backend.model.vo.GetImageInformationVo;
 import org.example.HarmonyOS_backend.model.vo.GetImageRandomlyVo;
 import org.example.HarmonyOS_backend.model.vo.MyImageVo;
@@ -37,6 +35,10 @@ public class ImageServiceImpl implements ImageService {
     private ImageMapper imageMapper;
     @Autowired
     private BrowsingHistoryMapper browsingHistoryMapper;
+    @Autowired
+    private UserLikeMapper userLikeMapper;
+    @Autowired
+    private BookmarkMapper bookmarkMapper;
     private ImageUploadDto imageUploadDto = new ImageUploadDto();
 //        private static final String header = "D:/upload/images/";
     private static final String header = "/opt/HarmonyOS/upload/images/";
@@ -124,6 +126,30 @@ public class ImageServiceImpl implements ImageService {
         List<MyImageVo> dataList = imageMapper.getMyImage(imageOwner);
         for(MyImageVo classInfo : dataList)
         {
+            FindUserLikeDto findUserLikeDto = new FindUserLikeDto();
+            findUserLikeDto.setImageId(classInfo.getImageId());
+            findUserLikeDto.setUserId(UserHolder.getUserId());
+            UserLike userLike = userLikeMapper.findUserLikeRecord(findUserLikeDto);
+            if(userLike == null)
+            {
+                classInfo.setIsLike(0);
+            }
+            else
+            {
+                classInfo.setIsLike(1);
+            }
+            FindBookmarkDto findBookmarkDto = new FindBookmarkDto();
+            findBookmarkDto.setImageId(classInfo.getImageId());
+            findBookmarkDto.setUserId(UserHolder.getUserId());
+            Bookmark bookmark = bookmarkMapper.findBookmarkRecord(findBookmarkDto);
+            if(bookmark == null)
+            {
+                classInfo.setIsBookmark(0);
+            }
+            else
+            {
+                classInfo.setIsBookmark(1);
+            }
             classInfo.setImageUrl(header1 + classInfo.getImageUrl());
         }
         int start = (page - 1) * size;
@@ -154,6 +180,30 @@ public class ImageServiceImpl implements ImageService {
         List<GetImageRandomlyVo> dataList = imageMapper.getImageRandomly(count);
         for(GetImageRandomlyVo classInfo : dataList)
         {
+            FindUserLikeDto findUserLikeDto = new FindUserLikeDto();
+            findUserLikeDto.setImageId(classInfo.getImageId());
+            findUserLikeDto.setUserId(UserHolder.getUserId());
+            UserLike userLike = userLikeMapper.findUserLikeRecord(findUserLikeDto);
+            if(userLike == null)
+            {
+                classInfo.setIsLike(0);
+            }
+            else
+            {
+                classInfo.setIsLike(1);
+            }
+            FindBookmarkDto findBookmarkDto = new FindBookmarkDto();
+            findBookmarkDto.setImageId(classInfo.getImageId());
+            findBookmarkDto.setUserId(UserHolder.getUserId());
+            Bookmark bookmark = bookmarkMapper.findBookmarkRecord(findBookmarkDto);
+            if(bookmark == null)
+            {
+                classInfo.setIsBookmark(0);
+            }
+            else
+            {
+                classInfo.setIsBookmark(1);
+            }
             classInfo.setImageUrl(header1 + classInfo.getImageUrl());
             classInfo.setHeadshotUrl(header1 + classInfo.getHeadshotUrl());
         }
@@ -166,6 +216,30 @@ public class ImageServiceImpl implements ImageService {
         List<GetImageRandomlyVo> dataList = imageMapper.searchImage(imageName);
         for(GetImageRandomlyVo classInfo : dataList)
         {
+            FindUserLikeDto findUserLikeDto = new FindUserLikeDto();
+            findUserLikeDto.setImageId(classInfo.getImageId());
+            findUserLikeDto.setUserId(UserHolder.getUserId());
+            UserLike userLike = userLikeMapper.findUserLikeRecord(findUserLikeDto);
+            if(userLike == null)
+            {
+                classInfo.setIsLike(0);
+            }
+            else
+            {
+                classInfo.setIsLike(1);
+            }
+            FindBookmarkDto findBookmarkDto = new FindBookmarkDto();
+            findBookmarkDto.setImageId(classInfo.getImageId());
+            findBookmarkDto.setUserId(UserHolder.getUserId());
+            Bookmark bookmark = bookmarkMapper.findBookmarkRecord(findBookmarkDto);
+            if(bookmark == null)
+            {
+                classInfo.setIsBookmark(0);
+            }
+            else
+            {
+                classInfo.setIsBookmark(1);
+            }
             classInfo.setImageUrl(header1 + classInfo.getImageUrl());
             classInfo.setHeadshotUrl(header1 + classInfo.getHeadshotUrl());
         }
@@ -231,6 +305,30 @@ public class ImageServiceImpl implements ImageService {
             else
             {
                 browsingHistoryMapper.updateBrowsingRecord(insertBrowsingHistoryDto);
+            }
+            FindUserLikeDto findUserLikeDto = new FindUserLikeDto();
+            findUserLikeDto.setImageId(getImageInformationVo.getImageId());
+            findUserLikeDto.setUserId(UserHolder.getUserId());
+            UserLike userLike = userLikeMapper.findUserLikeRecord(findUserLikeDto);
+            if(userLike == null)
+            {
+                getImageInformationVo.setIsLike(0);
+            }
+            else
+            {
+                getImageInformationVo.setIsLike(1);
+            }
+            FindBookmarkDto findBookmarkDto = new FindBookmarkDto();
+            findBookmarkDto.setImageId(getImageInformationVo.getImageId());
+            findBookmarkDto.setUserId(UserHolder.getUserId());
+            Bookmark bookmark = bookmarkMapper.findBookmarkRecord(findBookmarkDto);
+            if(bookmark == null)
+            {
+                getImageInformationVo.setIsBookmark(0);
+            }
+            else
+            {
+                getImageInformationVo.setIsBookmark(1);
             }
             return Result.success(getImageInformationVo);
         }catch(RuntimeException e) {
