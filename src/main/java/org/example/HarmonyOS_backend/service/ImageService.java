@@ -3,6 +3,7 @@ package org.example.HarmonyOS_backend.service;
 import org.apache.poi.ss.formula.functions.T;
 import org.example.HarmonyOS_backend.Result.Result;
 import org.example.HarmonyOS_backend.model.dto.GetMyImageDto;
+import org.example.HarmonyOS_backend.model.vo.GetImageInformationVo;
 import org.example.HarmonyOS_backend.model.vo.GetImageRandomlyVo;
 import org.example.HarmonyOS_backend.model.vo.MyImageVo;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,4 +23,5 @@ public interface ImageService {
     Result<List<GetImageRandomlyVo>> searchImage(String imageName);
 
     Result<T> deleteImage(int imageId);
+    Result<GetImageInformationVo> getImageInformation(int imageId);
 }

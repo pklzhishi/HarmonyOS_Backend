@@ -3,8 +3,10 @@ package org.example.HarmonyOS_backend.controller;
 import org.apache.poi.ss.formula.functions.T;
 import org.example.HarmonyOS_backend.Result.Result;
 import org.example.HarmonyOS_backend.model.dto.DeleteImgaeDto;
+import org.example.HarmonyOS_backend.model.dto.GetImageInformationDto;
 import org.example.HarmonyOS_backend.model.dto.GetMyImageDto;
 import org.example.HarmonyOS_backend.model.dto.SearchImageDto;
+import org.example.HarmonyOS_backend.model.vo.GetImageInformationVo;
 import org.example.HarmonyOS_backend.model.vo.GetImageRandomlyVo;
 import org.example.HarmonyOS_backend.model.vo.MyImageVo;
 import org.example.HarmonyOS_backend.service.ImageService;
@@ -63,5 +65,11 @@ public class ImageController {
     public Result<T> deleteImage(@RequestBody DeleteImgaeDto deleteImgaeDto)
     {
         return imageService.deleteImage(deleteImgaeDto.getImageId());
+    }
+
+    @PostMapping("/getImageInformation")
+    public Result<GetImageInformationVo> getImageInformation(@RequestBody GetImageInformationDto getImageInformationDto)
+    {
+        return imageService.getImageInformation(getImageInformationDto.getImageId());
     }
 }

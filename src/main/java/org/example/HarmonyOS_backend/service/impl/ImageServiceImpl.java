@@ -4,11 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.Null;
 import org.apache.poi.ss.formula.functions.T;
 import org.example.HarmonyOS_backend.Result.Result;
+import org.example.HarmonyOS_backend.mapper.BrowsingHistoryMapper;
 import org.example.HarmonyOS_backend.mapper.ImageMapper;
 import org.example.HarmonyOS_backend.model.dto.GetMyImageDto;
 import org.example.HarmonyOS_backend.model.dto.ImageUploadDto;
+import org.example.HarmonyOS_backend.model.dto.InsertBrowsingHistoryDto;
+import org.example.HarmonyOS_backend.model.entity.BrowsingHistory;
 import org.example.HarmonyOS_backend.model.entity.Image;
 import org.example.HarmonyOS_backend.model.entity.User;
+import org.example.HarmonyOS_backend.model.vo.GetImageInformationVo;
 import org.example.HarmonyOS_backend.model.vo.GetImageRandomlyVo;
 import org.example.HarmonyOS_backend.model.vo.MyImageVo;
 import org.example.HarmonyOS_backend.service.ImageService;
@@ -31,6 +35,8 @@ import static org.apache.commons.compress.harmony.pack200.PackingUtils.log;
 public class ImageServiceImpl implements ImageService {
     @Autowired
     private ImageMapper imageMapper;
+    @Autowired
+    private BrowsingHistoryMapper browsingHistoryMapper;
     private ImageUploadDto imageUploadDto = new ImageUploadDto();
 //        private static final String header = "D:/upload/images/";
     private static final String header = "/opt/HarmonyOS/upload/images/";
@@ -200,6 +206,35 @@ public class ImageServiceImpl implements ImageService {
             }
         }catch(Exception e){
             throw new RuntimeException("系统异常，删除失败",e);
+        }
+    }
+
+    @Override
+    public Result<GetImageInformationVo> getImageInformation(int imageId)
+    {
+        try{
+            GetImageInformationVo getImageInformationVo = imageMapper.getImageInformation(imageId);
+            if(getImageInformationVo == null)
+            {
+                return Result.error("获取图片信息失败或图片被删除");
+            }
+            int userId = UserHolder.getUserId();
+            BrowsingHistory browsingHistory = browsingHistoryMapper.findBrowsingRecord(imageId,userId);
+            InsertBrowsingHistoryDto insertBrowsingHistoryDto = new InsertBrowsingHistoryDto();
+            insertBrowsingHistoryDto.setImageId(imageId);
+            insertBrowsingHistoryDto.setUserId(userId);
+            insertBrowsingHistoryDto.setBrowsingTime(String.valueOf(LocalDateTime.now()));
+            if(browsingHistory == null)
+            {
+                browsingHistoryMapper.insertBrowsingRecord(insertBrowsingHistoryDto);
+            }
+            else
+            {
+                browsingHistoryMapper.updateBrowsingRecord(insertBrowsingHistoryDto);
+            }
+            return Result.success(getImageInformationVo);
+        }catch(RuntimeException e) {
+            throw new RuntimeException("获取图片信息失败,请稍后再试");
         }
     }
 }

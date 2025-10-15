@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.*;
 import org.example.HarmonyOS_backend.model.dto.ImageUploadDto;
 import org.example.HarmonyOS_backend.model.entity.Comments;
 import org.example.HarmonyOS_backend.model.entity.Image;
+import org.example.HarmonyOS_backend.model.vo.GetImageInformationVo;
 import org.example.HarmonyOS_backend.model.vo.GetImageRandomlyVo;
 import org.example.HarmonyOS_backend.model.vo.MyImageVo;
 
@@ -39,4 +40,9 @@ public interface ImageMapper {
 
     @Select("SELECT * FROM image WHERE image_id = #{imageId} AND is_delete = 0")
     Image getUserIdDeleted(int imageId);
+
+    @Select("SELECT image_id,image_name,image_owner,image_url,image_like,image_bookmark,image_time,content,username,headshot_url " +
+            "FROM user JOIN image ON user.user_id = image.image_owner WHERE image_id = #{imageId} " +
+            "AND user.is_delete = 0 AND image.is_delete = 0")
+    GetImageInformationVo getImageInformation(int imageId);
 }
