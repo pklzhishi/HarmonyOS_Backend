@@ -6,9 +6,11 @@ import org.example.HarmonyOS_backend.Result.Result;
 import org.example.HarmonyOS_backend.constan.JwtClaimsConstant;
 import org.example.HarmonyOS_backend.constan.JwtProperties;
 import org.example.HarmonyOS_backend.mapper.UserMapper;
+import org.example.HarmonyOS_backend.model.dto.ChangePasswordDto;
 import org.example.HarmonyOS_backend.model.dto.LoginDto;
 import org.example.HarmonyOS_backend.model.dto.RegisterDto;
 import org.example.HarmonyOS_backend.model.entity.User;
+import org.example.HarmonyOS_backend.model.vo.UserBasicInformationVo;
 import org.example.HarmonyOS_backend.model.vo.UserLoginVo;
 import org.example.HarmonyOS_backend.service.UserService;
 import org.example.HarmonyOS_backend.tool.UserHolder;
@@ -23,7 +25,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,7 +106,7 @@ public class UserServiceImpl implements UserService {
                         .userAccount(user.getUserAccount())
                         .username(user.getUsername())
                         .headshotUrl(user.getHeadshotUrl())
-                        .telephoneNumber(user.getTelephoneNumber())
+                        .email(user.getEmail())
                         .token(token)
                         .build();
                 return Result.success(userLoginVo);
@@ -117,7 +118,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<T> changeUserHeadshot(MultipartFile headshotImage)
+    public Result<String> changeUserHeadshot(MultipartFile headshotImage)
     {
         File tempSavedFile = null;
         try {
@@ -166,7 +167,7 @@ public class UserServiceImpl implements UserService {
                         log.error("头像上传失败，数据库插入异常");
                         throw new RuntimeException("头像上传失败，请稍后重试");
                     }
-                    return Result.success();
+                    return Result.success(header1 + fileName);
                 } catch (Exception e) {
                     log.error("头像上传数据库操作异常", e);
                     throw new RuntimeException("系统异常，头像上传失败", e);
@@ -180,6 +181,45 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             log.error("上传系统异常", e);
             return Result.error("系统异常，请重试");
+        }
+    }
+
+    @Override
+    public Result<UserBasicInformationVo> getUserBasicInformation()
+    {
+        int userId = UserHolder.getUserId();
+        try{
+            UserBasicInformationVo userBasicInformationVo = userMapper.getUserBasicInformation(userId);
+            return Result.success(userBasicInformationVo);
+        }catch(RuntimeException e) {
+            throw new RuntimeException("获取信息失败，请稍后再试");
+        }
+    }
+
+    @Override
+    public Result<T> changePassword(ChangePasswordDto changePasswordDto)
+    {
+        int userId = UserHolder.getUserId();
+        String oldPassword = md5(changePasswordDto.getOldPassword());
+        String password = userMapper.getPassword(userId);
+        if(!oldPassword.equals(password))
+        {
+            return Result.error("原密码错误");
+        }
+        String newPassword = md5(changePasswordDto.getNewPassword());
+        if(newPassword.equals(password))
+        {
+            return Result.error("新密码不能与原密码相同");
+        }
+        try{
+            int x = userMapper.updatePassword(newPassword,userId);
+            if(x <= 0)
+            {
+                throw new RuntimeException("修改密码失败,请稍后再试");
+            }
+            return Result.success();
+        }catch(RuntimeException e){
+            throw new RuntimeException("修改密码失败，请稍后再试");
         }
     }
 }

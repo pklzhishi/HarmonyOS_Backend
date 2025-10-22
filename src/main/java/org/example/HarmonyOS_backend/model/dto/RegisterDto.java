@@ -7,5 +7,5 @@ public class RegisterDto {
     private String userAccount;
     private String password;
     private String username;
-    private String telephoneNumber;
+    private String email;
 }

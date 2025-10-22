@@ -20,7 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
                 "/api/comments/postComments","/api/comments/deleteComments","/api/image/getMyImage",
                 "/api/image/getMyImageNumber","/api/image/getImageRandomly","/api/user/changeUserHeadshot",
                 "/api/image/deleteImage","/api/bookmark/changeBookmark","/api/bookmark/getBookmarkList",
-                "/api/image/getImageInformation","/api/bookmark/getBrowsingHistoryList","/api/image/searchImage").excludePathPatterns("/api/user/login","/api/user/register","/api/email/sendVerificationCode");
+                "/api/image/getImageInformation","/api/bookmark/getBrowsingHistoryList","/api/image/searchImage",
+                "/api/user/getUserBasicInformation","/api/user/changePassword","/api/image/imageUpload1").excludePathPatterns("/api/user/login","/api/user/register",
+                "/api/email/sendVerificationCode","/api/email/verifyCode");
     }
 
     @Override

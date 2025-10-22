@@ -37,6 +37,12 @@ public class ImageController {
         return imageService.imageUplode(multipartFile,imageName,content);
     }
 
+    @PostMapping("/imageUpload1")
+    public Result<T> imageUpload1(@RequestParam MultipartFile multipartFile, @RequestParam String imageName,@RequestParam(required = false,defaultValue = "") String content)
+    {
+        return imageService.imageUplode1(multipartFile,imageName,content);
+    }
+
     @PostMapping("/getMyImage")
     public Result<List<MyImageVo>> getMyImage(@RequestBody GetMyImageDto getMyImageDto)
     {

@@ -40,10 +40,61 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private BookmarkMapper bookmarkMapper;
     private ImageUploadDto imageUploadDto = new ImageUploadDto();
-//        private static final String header = "D:/upload/images/";
+//    private static final String header = "D:/upload/images/";
     private static final String header = "/opt/HarmonyOS/upload/images/";
-//        private static final String header1 = "http://10.34.18.43:8000/images/";
+//    private static final String header1 = "http://10.34.18.43:8000/images/";
     private static final String header1 = "http://115.29.241.234:8000/images/";
+
+    public Result<T> imageUplode1(MultipartFile file, String imageName,String content)
+    {
+        // 1. 校验文件是否为空
+        if (file.isEmpty()) {
+            return Result.error("上传失败：请选择文件");
+        }
+
+        // 2. 校验文件类型（仅允许图片格式）
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.matches(".*\\.(jpg|jpeg|png|gif)$")) {
+            return Result.error("上传失败：仅支持 jpg、jpeg、png、gif 等图片格式");
+        }
+
+        // 3. 生成唯一文件名（避免重名覆盖）
+        String fileName = UUID.randomUUID().toString()
+                + originalFilename.substring(originalFilename.lastIndexOf("."));
+
+        // 4. 创建保存目录（若不存在则创建）
+        File saveDir = new File(header);
+        if (!saveDir.exists()) {
+            saveDir.mkdirs(); // 递归创建目录
+        }
+
+        // 5. 保存文件到本地
+        try {
+            File destFile = new File(header + fileName);
+            file.transferTo(destFile); // 将上传的文件保存到目标路径
+            // 返回图片访问路径（实际项目中可配置为服务器 URL）
+            try {
+                imageUploadDto.setImageName(imageName);
+                imageUploadDto.setImageOwner(UserHolder.getUserId());
+                imageUploadDto.setImageUrl(fileName);
+                imageUploadDto.setImageTime(String.valueOf(LocalDateTime.now()));
+                imageUploadDto.setContent(content);
+                int insertRows = imageMapper.insertImage(imageUploadDto);
+                if (insertRows <= 0) {
+                    log.error("图片上传失败，数据库插入异常");
+                    throw new RuntimeException("图片上传失败，请稍后重试");
+                }
+                return Result.success();
+            } catch (Exception e) {
+                log.error("图片上传数据库操作异常", e);
+                throw new RuntimeException("系统异常，图片上传失败", e);
+            }
+        } catch (IOException e) {
+            return Result.error("上传失败：" + e.getMessage());
+        }
+    }
+
+
     public Result<T> imageUplode(MultipartFile multipartFile, String imageName,String content)
     {
         File tempSavedFile = null;
@@ -89,7 +140,7 @@ public class ImageServiceImpl implements ImageService {
                 fos.write(imageBinaryData); // 写入解码后的二进制数据
                 fos.flush();
                 try {
-                    imageUploadDto.setImageName(imageName);
+                    imageUploadDto.setImageName(imageName.substring(0,imageName.lastIndexOf(".")));
                     imageUploadDto.setImageOwner(UserHolder.getUserId());
                     imageUploadDto.setImageUrl(fileName);
                     imageUploadDto.setImageTime(String.valueOf(LocalDateTime.now()));

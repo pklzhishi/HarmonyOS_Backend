@@ -13,7 +13,7 @@ import java.util.Map;
 
 public interface ImageService {
     Result<T> imageUplode(MultipartFile file, String imageName,String content);
-//    Result<String> imageUplode(String base64Image, String imageName);
+    Result<T> imageUplode1(MultipartFile file, String imageName,String content);
     Result<List<MyImageVo>> getMyImage(GetMyImageDto getMyImageDto);
 
     Result<Map<String, Integer>> getMyImageNumber();

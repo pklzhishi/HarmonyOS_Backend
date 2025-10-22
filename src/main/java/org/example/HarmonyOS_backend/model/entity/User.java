@@ -11,6 +11,6 @@ public class User {
     private String password;
     private String username;
     private String headshotUrl;
-    private String telephoneNumber;
+    private String email;
     private String isDelete;
 }

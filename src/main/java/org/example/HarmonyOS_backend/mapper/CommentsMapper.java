@@ -22,6 +22,9 @@ public interface CommentsMapper {
     @Select("SELECT * FROM comments WHERE id = #{id}")
     Comments getUserIdDeleted(int id);
 
+    @Select("SELECT image_owner FROM comments JOIN image ON comments.image_id = image.image_id WHERE id = #{id}")
+    int getImageOwnerId(int id);
+
     @Select("SELECT id,comments.user_id,content,comments_time,username,headshot_url FROM comments JOIN user ON comments.user_id = user.user_id " +
             "WHERE image_id = #{imageId} AND comments.is_delete = 0 ORDER BY comments_time ASC")
     List<GetCommentsListVo> getCommentsList(int imageId);

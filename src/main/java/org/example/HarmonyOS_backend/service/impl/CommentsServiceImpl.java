@@ -52,7 +52,8 @@ public class CommentsServiceImpl implements CommentsService {
             }
             int userIdDeleted = commentsDeleted.getUserId();
             int user = UserHolder.getUserId();
-            if(userIdDeleted == user || user == commentsDeleted.getUserId())
+            int userOwnerId = commentsMapper.getImageOwnerId(id);
+            if(userIdDeleted == user || user == userOwnerId)
             {
                 try{
                     int x = commentsMapper.deleteComments(id);
